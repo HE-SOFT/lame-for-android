@@ -1,0 +1,19 @@
+<manifest
+    package="io.github.hesoft.lame.service"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name="io.github.hesoft.lame.service.LameService"
+            android:exported="true"
+            android:label="MP3 Encode Service">
+
+            <intent-filter android:priority="100">
+                <action android:name="io.github.hesoft.lame.MP3EncodeSERVICE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>

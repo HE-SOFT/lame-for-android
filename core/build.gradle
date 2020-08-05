@@ -1,0 +1,75 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        consumerProguardFiles 'proguard-rules.pro'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64" // "armeabi", "mips", "mips64"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+    sourceSets {
+        main {
+            // todo when android studio 4.1 is ready
+            // https://android-developers.googleblog.com/2020/02/native-dependencies-in-android-studio-40.html
+            // https://github.com/android/ndk-samples/tree/master/prefab/prefab-publishing
+            jniLibs.srcDirs = [
+                '../dist/lame/lib',
+            ]
+        }
+    }
+}
+
+dependencies {
+    implementation deps.androidx.annotation
+    implementation deps.kotlin.stdlib
+
+    api project(':api')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'externalNativeBuildRelease') {
+        task.dependsOn ":lame:externalNativeBuildRelease"
+    } else if (task.name == 'externalNativeBuildDebug') {
+        task.dependsOn ":lame:externalNativeBuildDebug"
+    }
+}
+
+//region maven-android
+apply plugin: 'maven'
+
+group = GROUP_ID
+def artifact = "core"
+version = '0.4.0'
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: LOCAL_REPO_URL)
+        pom.groupId = GROUP_ID
+        pom.artifactId = artifact
+        pom.version = version
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+
+artifacts { archives sourcesJar }
+//endregion
