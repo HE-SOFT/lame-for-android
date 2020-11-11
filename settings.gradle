@@ -1,1 +1,1 @@
-include ':lame', ':core', ':test', ':api', ':service'
+include ':lame', ':lame_jni', ':test', ':api', ':service'

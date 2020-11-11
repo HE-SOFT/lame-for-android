@@ -30,7 +30,7 @@
 
 #ifdef HAVE_MPGLIB
 #define hip_global_struct mpstr_tag 
-#include "lame.h"
+#include "lame/lame.h"
 #include "machine.h"
 #include "encoder.h"
 #include "interface.h"

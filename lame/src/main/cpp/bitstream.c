@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "lame.h"
+#include "lame/lame.h"
 #include "machine.h"
 #include "encoder.h"
 #include "util.h"

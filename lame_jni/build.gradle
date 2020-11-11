@@ -9,8 +9,12 @@ android {
         targetSdkVersion versions.targetSdk
         consumerProguardFiles 'proguard-rules.pro'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64" // "armeabi", "mips", "mips64"
+
+        ndkVersion "21.3.6528147"
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+            }
         }
     }
 
@@ -18,35 +22,35 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        prefab true
+    }
+
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
         }
     }
-    sourceSets {
-        main {
-            // todo when android studio 4.1 is ready
-            // https://android-developers.googleblog.com/2020/02/native-dependencies-in-android-studio-40.html
-            // https://github.com/android/ndk-samples/tree/master/prefab/prefab-publishing
-            jniLibs.srcDirs = [
-                '../dist/lame/lib',
-            ]
-        }
-    }
+
 }
 
 dependencies {
     implementation deps.androidx.annotation
     implementation deps.kotlin.stdlib
 
+    // use compileOnly for pure native lib, otherwise the lib's end-user will encounters error:
+    //  More than one file was found with OS independent path 'lib/abi/lib***.so'
+    compileOnly project(':lame')
+
     api project(':api')
 }
 
+// least on the Android studio 4.1, still needs to schedule the build tasks for the dependence native lib
 tasks.whenTaskAdded { task ->
-    if (task.name == 'externalNativeBuildRelease') {
-        task.dependsOn ":lame:externalNativeBuildRelease"
-    } else if (task.name == 'externalNativeBuildDebug') {
-        task.dependsOn ":lame:externalNativeBuildDebug"
+    if (task.name.startsWith('generateJsonModel')) {
+        def variant = task.name.substring('generateJsonModel'.length())
+        task.dependsOn ":lame:prefab" + variant + "Package"
     }
 }
 

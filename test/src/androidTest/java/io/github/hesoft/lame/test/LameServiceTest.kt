@@ -11,6 +11,7 @@ import io.github.hesoft.lame.service.ILameService
 import io.github.hesoft.lame.service.IRemoteLame
 import io.github.hesoft.lame.BufferReader
 import io.github.hesoft.lame.MPEGMode
+import io.github.hesoft.lame.service.LameService
 import org.junit.Test
 import java.io.File
 import java.io.FileOutputStream
@@ -25,7 +26,7 @@ class LameServiceTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val assetManager = context.assets
-    private val intent = Intent("io.github.hesoft.lame.MP3EncodeSERVICE")
+    private val intent = Intent(context, LameService::class.java)
     private val outBuff = ByteArray(8192)
 
     @Test
@@ -91,7 +92,10 @@ class LameServiceTest {
     }
 
     private fun test(
-        out: FileOutputStream, fileName: String, readBuff: BufferReader, block: (ByteArray, Int) -> Int
+        out: FileOutputStream,
+        fileName: String,
+        readBuff: BufferReader,
+        block: (ByteArray, Int) -> Int
     ) {
         val input = assetManager.open(fileName)
         // xxx jump file header

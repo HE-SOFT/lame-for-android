@@ -9,7 +9,7 @@ import androidx.annotation.IntRange;
 class Native {
 
     static {
-        System.loadLibrary("lame-java");
+        System.loadLibrary("lame-jni");
     }
 
     public static native String getVersion();

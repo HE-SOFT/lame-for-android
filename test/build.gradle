@@ -14,12 +14,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
     implementation deps.androidx.annotation
     implementation deps.kotlin.stdlib
-    implementation project(':core')
+    implementation project(':lame_jni')
     implementation project(':service')
 
     //region test
